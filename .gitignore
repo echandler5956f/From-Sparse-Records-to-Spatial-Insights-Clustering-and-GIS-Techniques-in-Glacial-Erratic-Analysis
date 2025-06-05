@@ -1,0 +1,47 @@
+# LaTeX compilation artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.lol
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.idx
+*.ilg
+*.ind
+*.nav
+*.snm
+*.vrb
+*.xdy
+
+# BibTeX temporary files
+*-blx.bib
+*.brf
+
+# LaTeX build directory (if using one)
+build/
+output/
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Keep the PDF output (comment this line if you don't want to track PDFs)
+# *.pdf 
