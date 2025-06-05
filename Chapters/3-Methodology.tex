@@ -1,0 +1,119 @@
+\chapter{Methodology}
+\label{chapter:method}
+
+\section{Overview}
+\label{sec:methodology_overview}
+
+The analytical approach employed in this research integrates geospatial analysis techniques with Natural Language Processing (NLP) methods to comprehensively investigate the phenomenon of named glacial erratics across North America. This multi-stage computational methodology is designed to move beyond simple cataloging, aiming instead to uncover spatial patterns, quantify contextual relationships, and extract thematic meaning from associated textual descriptions, thereby illuminating the geological, historical, and cultural significance of these landscape features \cite{Gregory2013, Bodenhamer2010}. The framework systematically processes spatial location data alongside heterogeneous textual and contextual geographic information, enabling a synthesis that respects both the quantitative aspects of erratic distribution and the qualitative richness of their embedded narratives. Central to this approach is the handling of inherent complexities identified in the preceding Case Studies (Section \ref{chapter:cases}), such as positional ambiguity, classification challenges, scale effects, and data heterogeneity, necessitating flexible and robust analytical techniques.
+
+\section{Geospatial Data Integration and Representation}
+\label{sec:geospatial_data}
+
+The foundation of our analysis is a curated geospatial database encapsulating information on named glacial erratics. Each erratic is primarily represented as a point feature, defined by geographic coordinates (latitude, longitude) referenced to the World Geodetic System 1984 (WGS84, EPSG:4326 datum) \cite{HofmannWellenhof2006}. While WGS84 provides a global standard, calculations requiring accurate metric distances or areas (e.g., proximity analysis, density estimation) necessitate projection into a coordinate system suitable for North America, such as an Albers Equal Area Conic projection tailored for the continent \cite{Snyder1987}. Associated with each point are attributes detailing geological characteristics (e.g., rock type, estimated size), historical information (e.g., discovery date, naming origins), and unstructured textual fields capturing descriptions, cultural significance, and historical notes.
+
+This core dataset is contextualized through the integration of diverse, authoritative external geospatial datasets representing key environmental and anthropogenic features across North America \cite{Worboys2004}. These include:
+\begin{itemize}
+    \item \textbf{Hydrological Networks:} Represented by polylines for rivers/streams and polygons for lakes/water bodies (conceptually similar to sources like HydroSHEDS).
+    \item \textbf{Settlements:} Points representing modern population centers (conceptually from sources like OpenStreetMap - OSM) and potentially historical settlement locations (from sources conceptually like NHGIS).
+    \item \textbf{Transportation Networks:} Polylines representing modern road networks (e.g., OSM) and historical transportation routes (e.g., colonial roads, conceptually from sources like DAART).
+    \item \textbf{Indigenous Territories:} Polygons representing historical and contemporary territorial boundaries (conceptually from sources like Native Land Digital).
+\end{itemize}
+Given the potential scale of these continental datasets, efficient data management strategies are conceptually employed. This involves preprocessing and spatial indexing of external vector layers within the geospatial database (leveraging indexing structures like R-trees \cite{Guttman1984}) and potentially caching intermediate results or frequently accessed subsets in efficient serialization formats suitable for columnar data access, thereby optimizing computational performance during repeated spatial queries and analyses.
+
+\section{Spatial Analysis Framework}
+\label{sec:spatial_analysis}
+
+\subsection{Proximity Metrics}
+\label{subsec:proximity}
+
+Understanding the spatial context of each erratic necessitates quantifying its proximity to salient landscape features. Due to the continental scale and the use of geographic coordinates, distances are calculated geodesically to account for the Earth's curvature. The Haversine formula provides a computationally efficient method for determining the great-circle distance between two points $(\text{lat}_1, \text{lon}_1)$ and $(\text{lat}_2, \text{lon}_2)$ on a sphere of radius $R$ (approximating the Earth) \cite{Sinnott1984}:
+\begin{align*}
+    a &= \sin^2\left(\frac{\Delta \text{lat}}{2}\right) + \cos(\text{lat}_1) \cos(\text{lat}_2) \sin^2\left(\frac{\Delta \text{lon}}{2}\right) \\
+    c &= 2 \cdot \text{atan2}(\sqrt{a}, \sqrt{1-a}) \\
+    d &= R \cdot c
+\end{align*}
+where $\Delta \text{lat} = \text{lat}_2 - \text{lat}_1$ and $\Delta \text{lon} = \text{lon}_2 - \text{lon}_1$.
+
+Calculating the minimum distance from an erratic point $p$ to linear features (e.g., nearest river or road) or areal features (e.g., nearest lake or boundary of a territory) involves finding the shortest geodesic distance from $p$ to any point on the geometry of the target feature $g$. Conceptually, this relies on geometric operations equivalent to finding the nearest point on $g$ to $p$ and then calculating the Haversine distance between $p$ and this nearest point \cite{Goodchild1992}. Efficient execution of these queries across large datasets typically leverages the spatial indexing capabilities (e.g., R-trees) inherent in spatial databases or libraries, allowing for rapid pruning of the search space \cite{Guttman1984} through functions conceptually similar to PostGIS's `ST\_Distance` and `ST\_ClosestPoint`.
+
+\subsection{Derived Contextual Variables}
+\label{subsec:derived_vars}
+
+Beyond direct proximity, several derived variables are generated to provide higher-level contextual understanding \cite{Burrough2015}. Continuous variables, such as elevation derived from a Digital Elevation Model (DEM), are often categorized into discrete bins (e.g., 'Lowland', 'Upland', 'Mountain') based on established or data-driven thresholds to facilitate interpretation and comparative analysis. Rule-based indices are constructed to synthesize multiple factors; for example, an `accessibility\_score` might be derived heuristically based on predefined distance thresholds to the nearest road and settlement, reflecting potential ease of access under modern conditions. Furthermore, a simplified model for `estimated\_displacement\_dist` may be employed, potentially based on regional ice flow directions inferred from latitude and known glacial limits, acknowledging this as a coarse approximation requiring further refinement for rigorous glaciological study.
+
+\subsection{Spatial Pattern Analysis (Clustering)}
+\label{subsec:clustering}
+
+To identify statistically significant spatial concentrations or clusters of erratics, Density-Based Spatial Clustering of Applications with Noise (DBSCAN) is employed \cite{Ester1996}. DBSCAN is chosen for its ability to discover clusters of arbitrary shape and its inherent handling of noise (points not belonging to any cluster), which are advantageous properties when analyzing potentially complex and uneven point distributions like those of erratics. The algorithm operates by grouping points that are closely packed together, marking as outliers points that lie alone in low-density regions.
+
+Core concepts involve:
+\begin{itemize}
+    \item The \textbf{$\epsilon$-neighborhood} of a point $p$, denoted $N_\epsilon(p)$, which includes all points $q$ within a specified distance $\epsilon$ from $p$ (using the Haversine distance metric in this geographic context).
+    \item A \textbf{core point} $p$, which is a point with at least `MinPts` (a minimum number of points) within its $\epsilon$-neighborhood, i.e., $|N_\epsilon(p)| \ge \text{MinPts}$.
+    \item \textbf{Density-reachability}: A point $q$ is directly density-reachable from a core point $p$ if $q \in N_\epsilon(p)$. A point $r$ is density-reachable from $p$ if there is a chain of points $p_1, ..., p_n$ with $p_1 = p$ and $p_n = r$ such that $p_{i+1}$ is directly density-reachable from $p_i$, and all $p_i$ in the chain (except possibly $r$) are core points.
+\end{itemize}
+A cluster is formed by a set of density-connected points, starting from a core point and expanding to include all points density-reachable from it. Parameter selection for $\epsilon$ and `MinPts` is critical. `MinPts` is often set based on domain knowledge (e.g., `MinPts=4` is common), while $\epsilon$ can be estimated by analyzing the k-distance graph, specifically looking for the 'knee' or point of maximum curvature in the sorted distances to the $k$-th nearest neighbor (where $k = \text{MinPts}-1$), indicating a transition distance where density significantly changes \cite{Ester1996}.
+
+\section{Natural Language Processing and Classification Framework}
+\label{sec:nlp_framework}
+
+\subsection{Textual Data Corpus}
+\label{subsec:corpus}
+
+A textual corpus is constructed by aggregating the unstructured text fields associated with each erratic entity in the database. This typically includes official descriptions, notes on cultural significance or Indigenous knowledge, historical accounts, interpretations of inscriptions (if present), and potentially excerpts from related documents or references. This corpus forms the basis for subsequent NLP analysis aimed at extracting thematic content and semantic meaning.
+
+\subsection{Linguistic Preprocessing}
+\label{subsec:preprocessing}
+
+To prepare the text for computational analysis and reduce noise, standard linguistic preprocessing steps are applied \cite{Manning2008, Jurafsky2009}. These include:
+\begin{itemize}
+    \item \textbf{Tokenization:} Segmenting the raw text into individual words or sub-word units (tokens).
+    \item \textbf{Normalization:} Converting text to lowercase to ensure consistency.
+    \item \textbf{Lemmatization:} Reducing words to their base or dictionary form (lemma) to group inflectional variants (e.g., "rocks," "rocked" $\rightarrow$ "rock"). This is preferred over stemming as it typically produces actual words, aiding interpretability.
+    \item \textbf{Filtering:} Removing common stopwords (e.g., "the," "is," "in") that provide little semantic value for topic discovery, and removing punctuation and non-alphanumeric characters.
+\end{itemize}
+The goal of preprocessing is to create a cleaned, normalized representation of the text, focusing on content-bearing terms while reducing the dimensionality of the vocabulary.
+
+\subsection{Semantic Representation (Embeddings)}
+\label{subsec:embeddings}
+
+To capture the semantic meaning of the textual descriptions beyond simple word counts, pre-trained deep learning language models are employed to generate high-dimensional vector representations (embeddings) for each erratic's aggregated text. Specifically, Sentence Transformer models (such as the `all-MiniLM-L6-v2` architecture archetype) are utilized \cite{Reimers2019}. These models are trained on vast text corpora to produce fixed-size dense vectors (e.g., $\mathbb{R}^{384}$ for MiniLM) where texts with similar meanings are located closer together in the vector space, typically measured by cosine similarity:
+$\text{similarity}(\vec{A}, \vec{B}) = \frac{\vec{A} \cdot \vec{B}}{\|\vec{A}\| \|\vec{B}\|}$
+This transformation allows semantic relationships between erratic descriptions to be quantified and leveraged for downstream tasks like clustering and classification, moving beyond surface lexical overlap.
+
+\subsection{Unsupervised Topic Discovery}
+\label{subsec:topic_discovery}
+
+A primary objective is to identify latent thematic structures within the erratic descriptions without relying on predefined labels. The principal approach leverages the semantic embeddings generated in the previous step, forming the conceptual basis of BERTopic \cite{Grootendorst2022}. This involves:
+\begin{enumerate}
+    \item Optional dimensionality reduction of the high-dimensional embeddings using techniques like Uniform Manifold Approximation and Projection (UMAP), which seeks to preserve both local and global structure of the data in a lower-dimensional space \cite{McInnes2018UMAP}.
+    \item Clustering the (potentially reduced) embeddings using a density-based algorithm like Hierarchical Density-Based Spatial Clustering of Applications with Noise (HDBSCAN), which extends DBSCAN to find clusters of varying densities and does not require specifying the number of clusters beforehand \cite{Campello2013HDBSCAN}.
+    \item Characterizing the resulting document clusters (topics) by extracting the most representative words using a class-based TF-IDF (Term Frequency-Inverse Document Frequency) approach or similar weighting schemes applied within each cluster.
+\end{enumerate}
+
+As an alternative or comparative method, Latent Dirichlet Allocation (LDA), a generative probabilistic model, is considered \cite{Blei2003}. LDA assumes documents are mixtures of a fixed number of latent topics ($K$), and topics are probability distributions over a vocabulary. It models the generation of a document $d$ as a two-stage process: first, choosing a topic distribution $\vec{\theta}_d \sim \text{Dirichlet}(\vec{\alpha})$, and then for each word $w_n$ in the document, choosing a topic $z_n \sim \text{Multinomial}(\vec{\theta}_d)$ and choosing the word $w_n \sim \text{Multinomial}(\vec{\beta}_{z_n})$, where $\vec{\beta}_z$ is the word distribution for topic $z$, itself drawn from a Dirichlet prior $\vec{\beta}_z \sim \text{Dirichlet}(\vec{\eta})$. Inference involves estimating the posterior distributions $P(z|d, w)$ to determine topic assignments. The optimal number of topics $K$ for LDA is often guided by maximizing topic coherence metrics (e.g., $C_v$ coherence \cite{Roder2015}), which measure the semantic relatedness of top words within inferred topics. While LDA operates on bag-of-words representations, the embedding-based approach (BERTopic) directly leverages semantic similarity, potentially capturing thematic nuances missed by word co-occurrence models alone.
+
+\subsection{Classification and Interpretation}
+\label{subsec:classification_interpretation}
+
+The outputs of the topic discovery process are used for interpretive classification. Each erratic is assigned the dominant topic(s) associated with its textual description based on the clustering results (BERTopic) or the highest probability topic assignments (LDA). This facilitates thematic exploration of the dataset (e.g., identifying clusters related to 'Indigenous Significance', 'Colonial Landmarks', 'Geological Descriptions', 'Tourism'). Furthermore, these topic assignments can inform derived heuristic scores. For instance, a `cultural\_significance\_score` might be calculated based on the presence or prominence of specific culturally relevant topics identified in an erratic's description, potentially weighted by confidence scores or supporting evidence markers.
+
+\section{Methodological Integration}
+\label{sec:integration}
+
+The geospatial and NLP frameworks are designed to be synergistic. Geospatial context (e.g., location, proximity to cultural sites, landscape position) can provide valuable input or weighting for interpreting NLP results. Conversely, NLP-derived classifications (e.g., identified `usage\_type` based on text, `cultural\_significance\_score`) are integrated back into the primary geospatial database as attributes associated with each erratic entity. This iterative feedback loop, where spatial context informs textual interpretation and textual insights enrich spatial understanding, allows for a more holistic analysis than either approach could achieve in isolation. The goal is to populate and refine a comprehensive spatio-textual record for each erratic, supporting complex queries that combine spatial and thematic criteria.
+
+\section{Addressing Methodological Nuances in the Domain}
+\label{sec:addressing_nuances}
+
+As highlighted in the preceding Case Studies (Section \ref{chapter:cases}), the analysis of named glacial erratics presents inherent methodological challenges stemming from the nature of the data and the subject matter \cite{Gregory2013}. Our methodology incorporates theoretical considerations to address these complexities:
+
+\begin{itemize}
+    \item \textbf{Data Sparsity and Heterogeneity:} The framework accommodates uneven data quality and completeness. NLP techniques are chosen for their robustness to varying text lengths, and confidence scores or flags can be associated with derived attributes based on input data quality. Proximity analyses yield results even with minimal input, but interpretation considers data provenance.
+    \item \textbf{Positional Uncertainty and Temporality:} The data model conceptually allows for multiple coordinate representations per entity (e.g., `location\_original`, `location\_current`) to address historical movement, enabling context-specific spatial analysis as demonstrated necessary by erratics like Plymouth Rock and Dighton Rock.
+    \item \textbf{Definitional Ambiguity:} For features that are not single discrete boulders (e.g., Babson's Boulders, Judges Cave), the methodology relies on flexible feature typing within the database (`feature\_type` = 'Collection', 'Composite Formation') to trigger appropriate analytical pathways (e.g., modified clustering interpretation, avoiding single-object metrics).
+    \item \textbf{Classification Complexity:} The multi-faceted nature of erratics (simultaneously geological objects, historical markers, cultural symbols) is addressed through multi-label classification possibilities (e.g., array-based `usage\_type`) and nuanced topic modeling capable of revealing overlapping themes, rather than forcing entities into single, potentially inadequate categories (as needed for Willamette Meteorite).
+    \item \textbf{Scale Effects:} The use of density-based clustering (DBSCAN/HDBSCAN) inherently mitigates the influence of extreme spatial outliers compared to centroid-based methods. For attribute outliers (e.g., size of Okotoks or Madison Boulder), derived categories ('Monumental') and robust statistical summaries are employed conceptually.
+    \item \textbf{Cultural Sensitivity:} NLP analysis aims to identify and appropriately weight topics related to Indigenous cultural significance, acknowledging the specific importance attached to sites like Okotoks Big Rock and the Willamette Meteorite (\emph{Tomanowos}). This requires careful model interpretation and potentially incorporating external knowledge or gazetteers.
+\end{itemize}
+By explicitly acknowledging these domain-specific challenges and building flexibility and robustness into the theoretical framework, the methodology aims to provide meaningful and reliable insights despite the inherent complexities of the data.

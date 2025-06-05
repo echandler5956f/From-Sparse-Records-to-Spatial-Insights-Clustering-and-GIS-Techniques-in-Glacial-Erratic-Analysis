@@ -1,0 +1,268 @@
+\documentclass[
+11pt, % The default document font size, options: 10pt, 11pt, 12pt
+%oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
+english, % ngerman for German
+singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
+%draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+%nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
+%liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
+%toctotoc, % Uncomment to add the main table of contents to the table of contents
+%parskip, % Uncomment to add space between paragraphs
+%nohyperref, % Uncomment to not load the hyperref package
+headsepline, % Uncomment to get a line under the header
+%chapterinoneline, % Uncomment to place the chapter title next to the number on one line
+%consistentlayout, % Uncomment to change the layout of the declaration, abstract and acknowledgements pages to match the default layout
+]{MastersDoctoralThesis} % The class file specifying the document structure
+
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+
+\usepackage{datetime}
+
+\newcommand\hmmax{0}
+\newcommand\bmmax{0}
+
+\newdateformat{monthyeardate}{%
+  \monthname[\THEMONTH], \THEYEAR}
+
+\usepackage{mathpazo} % Use the Palatino font by default
+
+\usepackage[backend=bibtex,style=ieee,natbib=true]{biblatex}
+
+\usepackage{amsmath,amssymb,amsfonts,bm}
+\usepackage{scalerel}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{mathrsfs}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{booktabs}
+\usepackage{pifont}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+% Bright noticeable placeholders for missing/TODO 
+\newcommand{\citeplaceholder}[1]{\textbf{[Cite #1]}}
+\newcommand{\placeholderfigure}[1][width=0.8\textwidth]{\fbox{\parbox{#1}{\centering Placeholder for Figure}}}
+\newcommand{\placeholdertext}[1]{\textcolor{red}{\textbf{[PLACEHOLDER: #1]}}}
+
+\addbibresource{refs.bib} % The filename of the bibliography
+
+\usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
+
+%----------------------------------------------------------------------------------------
+%	MARGIN SETTINGS
+%----------------------------------------------------------------------------------------
+
+\geometry{
+	paper=a4paper, % Change to letterpaper for US letter
+	inner=2.5cm, % Inner margin
+	outer=3.8cm, % Outer margin
+	bindingoffset=.5cm, % Binding offset
+	top=1.5cm, % Top margin
+	bottom=1.5cm, % Bottom margin
+	%showframe, % Uncomment to show how the type block is set on the page
+}
+
+%----------------------------------------------------------------------------------------
+%	THESIS INFORMATION
+%----------------------------------------------------------------------------------------
+
+\thesistitle{From Sparse Records to Spatial Insights: Clustering and GIS Techniques in Analysis of Named Erratics} % Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
+
+\supervisor{Prof. Mahdi \textsc{Agheli}\\Prof. Guanrui \textsc{Li}} % Your supervisor's name, this is used in the title page, print it elsewhere with \supname
+
+\examiner{} % Your examiner's name, this is not currently used anywhere in the template, print it elsewhere with \examname
+
+\degree{Bachelor of Science} % Your degree name, this is used in the title page and abstract, print it elsewhere with \degreename
+
+\author{Ethan \textsc{Chandler}} % Your name, this is used in the title page and abstract, print it elsewhere with \authorname
+
+\addresses{} % Your address, this is not currently used anywhere in the template, print it elsewhere with \addressname
+
+\subject{} % Your subject area, this is not currently used anywhere in the template, print it elsewhere with \subjectname
+
+\keywords{} % Keywords for your thesis, this is not currently used anywhere in the template, print it elsewhere with \keywordnames
+
+\university{\href{https://www.wpi.edu/}{Worcester Polytechnic Institute}} % Your university's name and URL, this is used in the title page and abstract, print it elsewhere with \univname
+
+\department{} % Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
+
+\group{\href{https://www.wpi.edu/}{Worcester Polytechnic Institute}} % Your research group's name and URL, this is used in the title page, print it elsewhere with \groupname
+
+\faculty{} % Your faculty's name and URL, this is used in the title page and abstract, print it elsewhere with \facname
+
+\AtBeginDocument{
+\hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
+\hypersetup{pdfauthor=\authorname} % Set the PDF's author to your name
+\hypersetup{pdfkeywords=\keywordnames} % Set the PDF's keywords to your keywords
+}
+
+\begin{document}
+
+\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+
+\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+% \vspace*{.06\textheight}
+\vspace*{1px}
+{\scshape\LARGE \univname\par}\vspace{1.5cm} % University name
+\textsc{\Large Interactive Qualifying Project}\\[0.5cm] % Thesis type
+
+\HRule \\[0.4cm] % Horizontal line
+{\huge \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
+\HRule \\[1.5cm] % Horizontal line
+ 
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Author:}\\
+\href{https://www.linkedin.com/in/echandler5956f/}{\authorname}\\ % Author name - remove the \href bracket to remove the link
+\vspace{0.4cm}
+\emph{Supervisor:} \\
+\href{https://www.wpi.edu/people/faculty/jcocola}{Professor Jim \textsc{Cocola}}\\
+{\small \bfseries Worcester Polytechnic Institute}
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \large
+% \emph{Supervisor:} \\
+% \href{https://www.wpi.edu/people/faculty/jcocola}{Professor Jim \textsc{Cocola}}\\
+% {\small \bfseries Worcester Polytechnic Institute}\vspace{0.4cm}
+
+\emph{Sponsors:} \\
+\href{https://uwaterloo.ca/architecture/profile/j2hutton}{Professor Jane Mah \textsc{Hutton}}\\
+{\small \bfseries University of Waterloo}\vspace{0.4cm}
+
+\href{https://www.americanantiquarian.org/}{American Antiquarian Society}\\
+{\small \bfseries Worcester, Massachussetts}
+
+\end{flushright}
+\end{minipage}\\[1.5cm]
+
+\includegraphics[width=0.2\textwidth]{Images/university.png}
+
+\vfill
+
+\large \textit{An Interactive Qualifying Project submitted in fulfillment of the requirements\\ for the degree of \degreename} at\\[0.3cm] % University requirement text
+\groupname \\[2cm] % Research group name and department name
+ 
+\vfill
+
+{\large \monthyeardate\today}\\[4cm] % Date
+ 
+\vfill
+\end{center}
+\end{titlepage}
+
+%----------------------------------------------------------------------------------------
+%	DECLARATION PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{declaration}
+\addchaptertocentry{\authorshipname} % Add the declaration to the table of contents
+\noindent I, \authorname, declare that this Interactive Qualifying Project titled, \enquote{\ttitle} and the work presented in it are my own. I confirm that:
+
+\begin{itemize} 
+\item This work was done wholly or mainly while in candidature for a research degree at this University.
+\item Where any part of this Interactive Qualifying Project has previously been submitted for a degree or any other qualification at this University or any other institution, this has been clearly stated.
+\item Where I have consulted the published work of others, this is always clearly attributed.
+\item Where I have quoted from the work of others, the source is always given. With the exception of such quotations, this Interactive Qualifying Project is entirely my own work.
+\item I have acknowledged all main sources of help.
+\item Where the Interactive Qualifying Project is based on work done by myself jointly with others, I have made clear exactly what was done by others and what I have contributed myself.\\
+\end{itemize}
+ 
+\noindent Signed:\\
+\rule[0.5em]{25em}{0.5pt} % This prints a line for the signature
+ 
+\noindent Date:\\
+\rule[0.5em]{25em}{0.5pt} % This prints a line to write the date
+\end{declaration}
+
+\cleardoublepage
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+Glacial erratics, boulders transported by ice sheets, serve as significant geological markers and potent cultural landmarks across North America. However, systematically analyzing their distribution and significance is challenged by the sparse, heterogeneous, and often qualitative nature of historical and geological records. This paper presents an integrated computational methodology designed to derive spatial and thematic insights from these complex datasets. We combine Geographic Information Systems (GIS) techniques for managing spatial data and calculating proximity metrics (e.g., Haversine distance) with advanced spatial analysis, including density-based clustering (DBSCAN), to identify patterns in erratic distributions. Crucially, we integrate Natural Language Processing (NLP), employing Sentence Transformer embeddings and topic modeling strategies (conceptually based on BERTopic and Latent Dirichlet Allocation - LDA), to extract semantic meaning and thematic structures from associated textual descriptions. We detail the theoretical underpinnings of this pipeline and illustrate its capacity to address specific domain challenges—such as positional ambiguity from historical movement, classification complexity, extreme scale variations, and data sparsity—through in-depth case studies of nine notable North American erratics. This work offers a robust framework for synthesizing diverse data sources, enabling deeper spatial-textual understanding of landscape features characterized by fragmented and challenging records.
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\begin{acknowledgements}
+\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
+The acknowledgments and the people to thank go here, don't forget to include your project advisor\ldots
+\end{acknowledgements}
+
+%----------------------------------------------------------------------------------------
+%	EXECUTIVE SUMMARY
+%----------------------------------------------------------------------------------------
+
+\begin{execSummary}
+\addchaptertocentry{\execname}
+Glacial erratics – large boulders transported by ancient ice sheets – are significant features across North America, holding clues about past environments and often carrying deep cultural and historical importance. However, understanding their broader patterns and significance is hindered by the nature of the data available: records are often sparse, inconsistent, spread across different sources, and mix geographic locations with historical anecdotes and cultural narratives. Effectively analyzing such fragmented information requires new approaches.
+
+This paper introduces and details a novel computational methodology designed specifically to tackle these challenges. We have developed an integrated system that combines geospatial techniques (mapping, distance calculations) with advanced computational text analysis (Natural Language Processing, or NLP). This allows us to simultaneously analyze the geographic distribution of erratics, identifying spatial clusters and relationships using methods like DBSCAN clustering, while also automatically uncovering key themes and meanings (such as cultural significance, geological descriptions, or historical uses) hidden within the associated textual records using topic modeling and semantic analysis.
+
+The paper explains the theoretical basis of this combined spatial-textual approach and demonstrates its effectiveness through case studies of nine particularly challenging erratics across North America. These examples show how the methodology can handle common problems like rocks that were moved historically, features of vastly different scales, and objects with complex classifications (like a meteorite transported by glaciers).
+
+Ultimately, this research provides a powerful new toolkit for researchers. By systematically integrating sparse spatial and textual data, our methodology enables deeper insights into the geological context, historical relevance, and cultural significance of glacial erratics and similar landscape features characterized by complex and incomplete records. The approach has broader applicability for studies in historical geography, digital humanities, and cultural heritage that grapple with integrating diverse, fragmented data sources.
+\end{execSummary}
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\tableofcontents % Prints the main table of contents
+
+\listoffigures % Prints the list of figures
+
+\listoftables % Prints the list of tables
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+
+\mainmatter % Begin numeric (1,2,3...) page numbering
+
+\pagestyle{thesis} % Return the page headers back to the "thesis" style
+
+% Include the chapters of the thesis as separate files from the Chapters folder
+% Uncomment the lines as you write the chapters
+
+\input{Chapters/1-Introduction}
+\input{Chapters/2-CaseStudies}
+\input{Chapters/3-Methodology}
+\input{Chapters/4-Results} 
+\input{Chapters/5-Conclusion}
+
+\appendix % Cue to tell LaTeX that the following "chapters" are Appendices
+
+% Include the appendices of the thesis as separate files from the Appendices folder
+% Uncomment the lines as you write the Appendices
+
+%\include{Appendices/AppendixA}
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\printbibliography[heading=bibintoc]
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
