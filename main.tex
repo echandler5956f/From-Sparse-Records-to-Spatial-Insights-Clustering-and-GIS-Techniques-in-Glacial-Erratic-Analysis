@@ -73,7 +73,7 @@ headsepline, % Uncomment to get a line under the header
 
 \thesistitle{From Sparse Records to Spatial Insights: Clustering and GIS Techniques in Analysis of Named Erratics} % Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
 
-\supervisor{Prof. Mahdi \textsc{Agheli}\\Prof. Guanrui \textsc{Li}} % Your supervisor's name, this is used in the title page, print it elsewhere with \supname
+\supervisor{} % Your supervisor's name, this is used in the title page, print it elsewhere with \supname
 
 \examiner{} % Your examiner's name, this is not currently used anywhere in the template, print it elsewhere with \examname
 
@@ -144,7 +144,7 @@ headsepline, % Uncomment to get a line under the header
 {\small \bfseries University of Waterloo}\vspace{0.4cm}
 
 \href{https://www.americanantiquarian.org/}{American Antiquarian Society}\\
-{\small \bfseries Worcester, Massachussetts}
+{\small \bfseries Worcester, Massachusetts}
 
 \end{flushright}
 \end{minipage}\\[1.5cm]
@@ -194,8 +194,19 @@ headsepline, % Uncomment to get a line under the header
 %	ABSTRACT PAGE
 %----------------------------------------------------------------------------------------
 
+
+
+
 \begin{abstract}
 \addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{Images/okotoks.png}
+	\caption{Okotoks Big Rock, Alberta, Canada}
+	\label{fig:okotoks}
+\end{figure}
+
 Glacial erratics—boulders transported by ice sheets and deposited across North America—represent remarkable landscape features that exist at the intersection of geological science and cultural meaning-making. Despite their significance as both natural phenomena and cultural landmarks, information about named erratics remains scattered across diverse sources, creating barriers to public engagement and scholarly research. This paper presents the development and implementation of an interdisciplinary digital heritage platform that consolidates this fragmented knowledge into a unified, publicly accessible web application serving heritage tourists, educators, researchers, and local communities. The platform employs modern web technologies—React.js frontend, Node.js/Express backend, and PostgreSQL with PostGIS spatial extensions—to provide real-time filtering capabilities, interactive mapping, and route optimization functionality that transforms static heritage information into practical tourism planning tools. Through detailed examination of nine diverse case studies ranging from contested heritage sites like Plymouth Rock to Indigenous sacred places like Okotoks Big Rock, we demonstrate how standardized digital systems can accommodate complex cultural objects while maintaining respectful representation and scholarly accuracy. The platform's Traveling Salesman Problem route optimization, geodesically accurate distance calculations, and comprehensive filtering system enable users to discover and visit erratics based on geological characteristics, cultural significance, and accessibility requirements. This research contributes methodological insights to digital heritage practice, establishes precedents for heritage tourism applications, and validates interdisciplinary approaches that bridge geological science with cultural heritage preservation through accessible public interfaces.
 \end{abstract}
 
@@ -205,7 +216,13 @@ Glacial erratics—boulders transported by ice sheets and deposited across North
 
 \begin{acknowledgements}
 \addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
-The acknowledgments and the people to thank go here, don't forget to include your project advisor\ldots
+
+I would like to express my gratitude to my project advisor, Professor Jim Cocola, for his guidance and support throughout this Interactive Qualifying Project. I am deeply grateful to Professor Jane Mah Hutton from the University of Waterloo for her sponsorship and expertise in research of glacial erratics, which greatly enriched this interdisciplinary work.
+
+Special thanks to the American Antiquarian Society in Worcester, Massachusetts, for their sponsorship and for providing access to valuable historical resources that informed this research. I also acknowledge the Indigenous communities whose traditional knowledge and cultural narratives are respectfully represented in this platform.
+
+I extend my appreciation to the developers of the open-source technologies that made this platform possible, including the React, Node.js, PostgreSQL, and PostGIS communities. Finally, I thank the many local historians, geological societies, and heritage organizations whose documentation and preservation efforts ensure that the stories of these remarkable landscape features continue to be shared and celebrated.
+
 \end{acknowledgements}
 
 %----------------------------------------------------------------------------------------
@@ -222,7 +239,7 @@ The platform demonstrates successful integration of modern web technologies with
 
 Through detailed examination of nine diverse case studies—from contested heritage sites like Plymouth Rock to Indigenous sacred places like Okotoks Big Rock to artistic installations like Babson's Boulders—we demonstrate how digital heritage platforms can accommodate complex cultural objects within standardized systems while maintaining respectful representation of cultural knowledge and protocols.
 
-The platform successfully serves multiple user communities: heritage tourists seeking practical visiting information, educators exploring geological and cultural connections, researchers investigating spatial patterns, and local stakeholders documenting landscape significance. Performance results show millisecond response times for complex spatial queries across continental-scale datasets, validating the technical architecture's ability to support responsive public interfaces and scalablity to future research efforts.
+The platform successfully serves multiple user communities: heritage tourists seeking practical visiting information, educators exploring geological and cultural connections, researchers investigating spatial patterns, and local stakeholders documenting landscape significance. Performance results show millisecond response times for complex spatial queries across continental-scale datasets, validating the technical architecture's ability to support responsive public interfaces and scalability to future research efforts.
 
 This research contributes methodological insights to digital heritage practice, establishes important precedents for heritage tourism applications, and validates interdisciplinary approaches that bridge geological science with cultural heritage preservation. The project demonstrates how thoughtful integration of spatial technology, content curation, and user experience design can create inclusive digital spaces that serve both scholarly inquiry and community needs while fostering sustainable relationships between human communities and significant landscape features.
 \end{execSummary}
@@ -234,8 +251,6 @@ This research contributes methodological insights to digital heritage practice, 
 \tableofcontents % Prints the main table of contents
 
 \listoffigures % Prints the list of figures
-
-\listoftables % Prints the list of tables
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - CHAPTERS
